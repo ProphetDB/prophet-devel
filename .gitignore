@@ -1,0 +1,7 @@
+Prophet-*
+.build
+*~
+.prove
+cover_db
+*.bak
+.tidyall.d
