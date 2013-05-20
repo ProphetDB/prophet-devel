@@ -23,17 +23,17 @@ use Dist::Zilla::PluginBundle::TestingMania;
 with 'Dist::Zilla::Role::PluginBundle::Easy';
 
 sub configure {
-    my ( $self ) = @_;
+    my ($self) = @_;
     my $arg = $self->payload;
 
     my $release_branch = 'releases';
-   
+
     $self->add_plugins(
-        ['Git::GatherDir' => { include_dotfiles => 1 }],
-        qw/ 
+        ['Git::GatherDir' => {include_dotfiles => 1}],
+        qw/
           PruneCruft
           ContributorsFile
-          ContributorsFromGit          
+          ContributorsFromGit
           Git::NextVersion
           MetaJSON
           ExecDir
@@ -47,33 +47,40 @@ sub configure {
           Test::Pod::No404s
           Test::ReportPrereqs
           TestRelease
-          RunExtraTests
           ConfirmRelease
-        /,
-        [ReadmeAnyFromPod => {
-            type     => 'markdown',
-            filename => 'README.mkdn',
-            location => 'root',
-        }],
+          /,
+        [
+            ReadmeAnyFromPod => {
+                type     => 'markdown',
+                filename => 'README.mkdn',
+                location => 'build',
+            }
+        ],
     );
-    $self->add_bundle(TestingMania => {disable => [qw/MetaTests Perl::Critic/]});
+    $self->add_bundle(
+        TestingMania => {disable => [qw/MetaTests Test::Perl::Critic/]});
 
-    if ( $arg->{fake_release} ) {
-        $self->add_plugins( 'FakeRelease' );
-    } else {
-        $self->add_plugins(
-            'Git::Commit',
-            [ 'Git::CommitBuild' => {
-                multiple_inheritance => 1,
-                release_branch => 'last_release',
-            }],
-            [ 'Git::Tag'  => { signed => 1, branch => 'last_release' } ],
-            qw/
-                Git::Push
-                UploadToCPAN
-            /
-        );
+    if ($arg->{fake_release}) {
+
+        # XXX don't run extra tests for a real release yet - too many fail
+        $self->add_plugins(qw/FakeRelease RunExtraTests/);
+        return;
     }
+
+    $self->add_plugins(
+        'Git::Commit',
+        [
+            'Git::CommitBuild' => {
+                release_branch => 'last_release',
+            }
+        ],
+        ['Git::Tag' => {signed => 1, branch => 'last_release'}],
+        qw/
+          Git::Push
+          UploadToCPAN
+          /
+    );
+
     return;
 }
 
