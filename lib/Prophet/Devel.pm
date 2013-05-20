@@ -22,15 +22,16 @@ version 0.001
 
 =head1 SYNOPSIS
 
-  $ prophet-devel-setup
+  ~/Prophet$ prophet-devel-setup
   ...
-  $
+  ~/Prophet$
 
 =head1 DESCRIPTION
 
-Run the C<prophet-devel-setup> script, which will use your CPAN client to install
-all the requirements for hacking on Prophet (Dist::Zilla, Code::TidyAll) and
-a git pre-commit hook to check your commits for policy violations.
+Just run the C<prophet-devel-setup> script from the root of your Prophet checkout.
+It will use your CPAN client to install all the requirements for hacking on
+Prophet (Dist::Zilla, Code::TidyAll) and a git pre-commit hook to check your
+commits for any policy violations.
 
 =head1 AUTHOR
 
